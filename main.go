@@ -1,19 +1,23 @@
 package main
 
 import (
-		"github.com/labstack/echo"
+	"net/http"
+	"taxi_app/models"
+
+	"github.com/labstack/echo/v4"
 )
 
-func main(){
+func main() {
+	app := models.NewApplications() //создание пула заявок перед стартом приложения
 	e := echo.New()
+	e.GET("/request", func(c echo.Context) error {
+		return c.String(http.StatusOK, app.GetApp()) // получение одной заявки для таксиста, метод который возвращает строку
 
-	e.GET("/request", func(c echo.Context) error { return c.JSON(200, "GET REQUEST")})
-	e.PUT("/request", func(c echo.Context) error { return c.JSON(200, " PUT REQUEST")})
+	})
+	e.GET("/admin/request", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, app.GetAllApps()) // получение всех заявок для админов, которые были показаны минимум один разб метод который возвращает слайс application
 
-	e.GET("/admin/request", func(c echo.Context) error { return c.JSON(200, "GET ADMIN REQUEST")})
-	e.PUT("/admin/request", func(c echo.Context) error { return c.JSON(200, "PUT ADMIN REQUEST")})
+	})
 
-
-	e.Logger.Fatal(e.Start(":8000"))
-
+	e.Logger.Fatal(e.Start(":9000"))
 }
